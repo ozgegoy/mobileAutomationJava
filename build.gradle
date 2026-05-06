@@ -1,0 +1,23 @@
+plugins {
+    id 'java'
+}
+
+group = 'com.example'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation group: 'io.cucumber', name: 'cucumber-java', version: '7.18.0'
+    implementation group: 'io.appium', name: 'java-client', version: '9.3.0'
+    testImplementation group: 'io.cucumber', name: 'cucumber-junit', version: '7.18.0'
+    testImplementation 'org.slf4j:slf4j-simple:2.0.12'
+    testImplementation 'org.aeonbits.owner:owner:1.0.12'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
