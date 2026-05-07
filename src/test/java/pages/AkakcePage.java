@@ -17,6 +17,7 @@ import java.net.URL;
 import java.time.Duration;
 import java.util.Collections;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 public class AkakcePage {
     private WebDriverWait wait;
@@ -42,18 +43,13 @@ public class AkakcePage {
 
     private final By homePage = AppiumBy.id("com.akakce.akakce:id/headLogo");
     private final By searchButton = AppiumBy.id("com.akakce.akakce:id/searchTextView");
-    private final By searchRedirect = AppiumBy.id("com.akakce.akakce:id/searchRedirect");
-    private final By filterText = AppiumBy.id("com.akakce.akakce:id/filterText");
-    private final By applyFilterButton = AppiumBy.id("com.akakce.akakce:id/applyFilterBtn");
+    private final By applyFilterButton = AppiumBy.id("com.akakce.akakce:id/apply");
     private final By sortingOptions = AppiumBy.id("com.akakce.akakce:id/sortText");
-    private final By detailButton = AppiumBy.id("com.akakce.akakce:id/detailBtnLayout");
+    private final By detailButton = AppiumBy.id("com.akakce.akakce:id/detailBtnTextView");
+    private final String cellContainer = "(//android.widget.ImageView[@resource-id=\"com.akakce.akakce:id/image\"])[2]";
 
     public By sortName(String value) {
         return AppiumBy.xpath(String.format("//android.widget.TextView[@resource-id=\"com.akakce.akakce:id/sort_name\" and @text=\"%s\"]", value));
-    }
-
-    public By productId(String value) {
-        return AppiumBy.xpath(String.format("(//android.widget.ImageView[@resource-id=\"com.akakce.akakce:id/image\"])[\"%s\"]", value));
     }
 
     public By textLocator(String value) {
@@ -74,12 +70,10 @@ public class AkakcePage {
 
         Actions actions = new Actions(driver);
         actions.sendKeys(Keys.ENTER).perform();
-
-        wait.until(ExpectedConditions.elementToBeClickable(searchRedirect)).click();
     }
 
     public void clickFilterButton() {
-        wait.until(ExpectedConditions.elementToBeClickable(filterText)).click();
+        clickFilterOption("Filtrele");
     }
 
     public void swipeUp() {
@@ -95,7 +89,7 @@ public class AkakcePage {
     }
 
     public void clickFilterOption(String text) {
-        for (int i = 0; i < 8; i++) {
+        for (int i = 0; i < 10; i++) {
             try {
                 List<WebElement> elements = driver.findElements(
                         By.xpath("//android.widget.TextView[@text='" + text + "']"));
@@ -108,16 +102,12 @@ public class AkakcePage {
             }
 
             swipeUp();
-            try {
-                Thread.sleep(500);
-            } catch (Exception ignored) {
-            }
         }
         throw new RuntimeException("Filter option bulunamadı: " + text);
     }
 
     public void clickShowProductsButton() {
-        wait.until(ExpectedConditions.elementToBeClickable(applyFilterButton)).click();
+        wait.until(ExpectedConditions.visibilityOfElementLocated(applyFilterButton)).click();
     }
 
     public void clickSortingOptions() {
@@ -128,8 +118,22 @@ public class AkakcePage {
         wait.until(ExpectedConditions.elementToBeClickable(sortName(sortText))).click();
     }
 
-    public void clickProduct(String product) {
-        wait.until(ExpectedConditions.elementToBeClickable(productId(product))).click();
+    public void scrollUntilElementInvisible(int maxSwipeCount) {
+        for (int i = 0; i < maxSwipeCount; i++) {
+            try {
+                WebElement element = driver.findElement(By.xpath(cellContainer));
+                if (!element.isDisplayed()) {
+                    return;
+                }
+            } catch (NoSuchElementException e) {
+            }
+            swipeUp();
+        }
+    }
+
+    public void clickProduct() {
+        scrollUntilElementInvisible(5);
+        wait.until(ExpectedConditions.elementToBeClickable(AppiumBy.xpath(cellContainer))).click();
     }
 
     public void clickDetailButton() {

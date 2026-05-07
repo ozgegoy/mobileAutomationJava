@@ -44,9 +44,9 @@ public class AkakceSteps {
         akakcePage.clickSortName(sortText);
     }
 
-    @And("the user taps on the {string}th product in the results list")
-    public void theUserTapsOnTheThProductInTheResultsList(String productId) {
-        akakcePage.clickProduct(productId);
+    @And("the user taps on the 10th product in the results list")
+    public void theUserTapsOnTheThProductInTheResultsList() {
+        akakcePage.clickProduct();
     }
 
     @And("the user taps the Go to Product button")
